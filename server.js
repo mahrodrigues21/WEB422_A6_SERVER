@@ -24,7 +24,7 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
 // using the following online tool:
 // https://lastpass.com/generatepassword.php
 
-jwtOptions.secretOrKey = '&0y7$noP#5rt99&GB%Pz7j2b1vkzaB0RKs%^N^0zOP89NT04mPuaM!&G8cbNZOtH';
+jwtOptions.secretOrKey = process.env.JWT_SECRET;
 
 let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
     console.log('payload received', jwt_payload);
@@ -35,9 +35,7 @@ let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
         // that matches the request payload data
         next(null, {
             _id: jwt_payload._id,
-            userName: jwt_payload.userName,
-            fullName: jwt_payload.fullName,
-            role: jwt_payload.role,
+            userName: jwt_payload.userName
         });
     } else {
         next(null, false);
@@ -67,9 +65,7 @@ app.post("/api/user/login", (req, res) => {
         .then((user) => {
             let payload = {
                 _id: user._id,
-                userName: user.userName,
-                fullName: user.fullName,
-                role: user.role,
+                userName: user.userName
             };
 
             let token = jwt.sign(payload, jwtOptions.secretOrKey);
